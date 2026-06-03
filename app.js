@@ -1,11 +1,17 @@
+const mongoose = require('mongoose');
 const express = require ('express');
 const app = express();
+require("dotenv").config();
 app.set("view engine","ejs")
 const path = require('path');
 const usermodel= require('./models/user');
 app.use(express.json());
 app.use(express.urlencoded( {extended:true}));
 app.use(express.static (path.join (__dirname,'public')));
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
 app.get('/',function (req,res) {
     res.render('index');
@@ -40,4 +46,6 @@ app.post('/create', async (req,res) =>{
         name,email,image});  
         res.send(createduser);
 })
-app.listen(3000);
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server is running");
+});
